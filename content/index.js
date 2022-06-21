@@ -102,12 +102,17 @@ function mount () {
           if (state.content.mathjax) {
             dom.push(m('script', {type: 'text/x-mathjax-config'}, mathjax))
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
+              src: 'https://cdn.staticfile.org/mathjax/2.7.9/MathJax.js'
             }))
           }
           if (state.content.mermaid) {
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+							// src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+							src: 'https://cdn.staticfile.org/mermaid/8.13.8/mermaid.min.js'
+            }))
+            dom.push(m('script', {
+							// src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+							src: 'https://unpkg.com/@panzoom/panzoom@4.4.4/dist/panzoom.min.js'
             }))
             dom.push(m('script', {type: 'text/javascript'}, `
               ;(() => {
@@ -115,9 +120,14 @@ function mount () {
                   if (!!(window.mermaid && mermaid.init)) {
                     clearInterval(timeout)
                     mermaid.init({}, 'code.language-mmd, code.language-mermaid')
-                  }
-                }, 50)
-              })()
+										var config = { startOnLoad:true, flowchart:{ useMaxWidth:false } };
+										mermaid.initialize(config);
+										}
+									}, 50)
+									window.addEventListener("load", function () {   //添加load事件
+       console.log("load执行");
+   }, false);
+								})()
             `))
           }
         }
@@ -141,6 +151,17 @@ var scroll = (() => {
             var timeout = setInterval(() => {
               var svg = Array.from(document.querySelectorAll('code.language-mmd svg, code.language-mermaid svg'))
               if (diagrams.length === svg.length) {
+								var elem=svg[0]
+								const panzoom = Panzoom(elem, { canvas: true })
+const parent = elem.parentElement
+// No function bind needed
+parent.addEventListener('wheel', panzoom.zoomWithWheel)
+
+// This demo binds to shift + wheel
+parent.addEventListener('wheel', function(event) {
+  if (!event.shiftKey) return
+  panzoom.zoomWithWheel(event)
+})
                 clearInterval(timeout)
                 resolve()
               }

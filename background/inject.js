@@ -16,6 +16,7 @@ md.inject = ({storage: {state}}) => (id) => {
   chrome.tabs.insertCSS(id, {file: 'content/index.css', runAt: 'document_start'})
   chrome.tabs.insertCSS(id, {file: 'vendor/prism.min.css', runAt: 'document_start'})
 
+  chrome.tabs.executeScript(id, {file: 'vendor/panzoom.min.js', runAt: 'document_start'})
   chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
   chrome.tabs.executeScript(id, {file: 'vendor/prism.min.js', runAt: 'document_start'})
   if (state.content.emoji) {
